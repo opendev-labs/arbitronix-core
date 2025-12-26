@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arbitronix | Secured Access Control</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg-base: #020408;
+            --bg-surface: #0a0c14;
+            --bg-card: rgba(16, 18, 28, 0.7);
+            --primary: #00f5ff;
+            --primary-glow: rgba(0, 245, 255, 0.4);
+            --secondary: #7c3aed;
+            --secondary-glow: rgba(124, 58, 237, 0.4);
+            --success: #00ff88;
+            --danger: #ff3366;
+            --warning: #ffcc00;
+            --text-h: #ffffff;
+            --text-p: #94a3b8;
+            --border: rgba(255, 255, 255, 0.05);
+            --glass: blur(25px);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: default;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-p);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+        }
+
+        #login-portal {
+            width: 100%;
+            max-width: 450px;
+            padding: 40px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            backdrop-filter: var(--glass);
+            z-index: 2000;
+            text-align: center;
+        }
+
+        .login-logo {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 16px;
+            transform: rotate(45deg);
+            margin: 0 auto 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 40px var(--primary-glow);
+        }
+
+        .login-logo::after {
+            content: "A";
+            color: #000;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 800;
+            transform: rotate(-45deg);
+            font-size: 32px;
+        }
+
+        .login-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-h);
+            margin-bottom: 12px;
+        }
+
+        .login-subtitle {
+            font-size: 14px;
+            color: var(--text-p);
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        input {
+            width: 100%;
+            padding: 14px 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text-h);
+            outline: none;
+            transition: 0.3s;
+            cursor: text;
+        }
+
+        input:focus {
+            border-color: var(--primary);
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 16px;
+            background: var(--text-h);
+            color: #000;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .login-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.2);
+        }
+
+        #dashboard-wrapper {
+            display: none;
+            width: 100%;
+            min-height: 100vh;
+        }
+
+        .header {
+            padding: 0 40px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border);
+            background: rgba(2, 4, 8, 0.85);
+            backdrop-filter: var(--glass);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo-text {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-h);
+        }
+
+        .logo-text span {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .status-area {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            border-radius: 99px;
+        }
+
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--success);
+            box-shadow: 0 0 10px var(--success);
+        }
+
+        .logout-btn {
+            background: rgba(255, 51, 102, 0.1);
+            color: var(--danger);
+            border: 1px solid rgba(255, 51, 102, 0.2);
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: var(--danger);
+            color: #fff;
+        }
+
+        .main-container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 40px;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .quantum-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 30px;
+            transition: 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .quantum-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
+            transform: translateX(-100%);
+            transition: 0.5s;
+        }
+
+        .quantum-card:hover::before {
+            transform: translateX(100%);
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: var(--text-p);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        .stat-value {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--text-h);
+        }
+
+        .content-area {
+            display: grid;
+            grid-template-columns: 2.5fr 1fr;
+            gap: 24px;
+        }
+
+        .market-table-container {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 32px;
+            backdrop-filter: var(--glass);
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 8px;
+        }
+
+        th {
+            text-align: left;
+            padding: 0 20px 10px;
+            font-size: 10px;
+            color: var(--text-p);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        tbody tr {
+            background: rgba(255, 255, 255, 0.015);
+            transition: 0.2s;
+        }
+
+        tbody tr:hover {
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        td {
+            padding: 15px 20px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            border-top: 1px solid transparent;
+        }
+
+        td:first-child {
+            border-radius: 12px 0 0 12px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            color: var(--text-h);
+        }
+
+        td:last-child {
+            border-radius: 0 12px 12px 0;
+        }
+
+        .action-chip {
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            text-align: center;
+            display: inline-block;
+            min-width: 80px;
+        }
+
+        .buy {
+            background: rgba(0, 255, 136, 0.1);
+            color: var(--success);
+            border: 1px solid var(--success);
+        }
+
+        .sell {
+            background: rgba(255, 51, 102, 0.1);
+            color: var(--danger);
+            border: 1px solid var(--danger);
+        }
+
+        .hold {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-p);
+            border: 1px solid var(--border);
+        }
+
+        .telemetry-container {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            border-top: 2px solid var(--primary);
+        }
+
+        .telemetry-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--border);
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            color: var(--text-h);
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+
+        .telemetry-content {
+            flex: 1;
+            padding: 15px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            max-height: 500px;
+            overflow-y: auto;
+            color: var(--text-p);
+        }
+
+        .log-line {
+            margin-bottom: 4px;
+            border-left: 2px solid var(--primary);
+            padding-left: 8px;
+        }
+
+        .server-config {
+            margin-top: 30px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            justify-content: center;
+            padding-bottom: 60px;
+        }
+
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="login-portal">
+        <div class="login-logo"></div>
+        <h1 class="login-title">ARBITRONIX</h1>
+        <p class="login-subtitle">Mission Control | Secured Interface</p>
+        <div class="form-group">
+            <label class="form-label">Username</label>
+            <input type="text" id="username" placeholder="opendev-labs" value="opendev-labs">
+        </div>
+        <div class="form-group">
+            <label class="form-label">Identity Key</label>
+            <input type="password" id="password" placeholder="••••••••">
+        </div>
+        <button class="login-btn" onclick="validateIdentity()">AUTHENTICATE MISSION</button>
+        <p id="error-msg" style="color:var(--danger); margin-top:15px; display:none; font-size: 12px; font-weight:700;">
+            IDENTITY VERIFICATION FAILED</p>
+    </div>
+
+    <div id="dashboard-wrapper">
+        <div id="portal-content"></div>
+    </div>
+
+    <script>
+        // Session Persistence
+        if (sessionStorage.getItem('arbitronix_auth') === 'true') {
+            document.getElementById('login-portal').style.display = 'none';
+            document.body.style.display = 'block';
+            document.getElementById('dashboard-wrapper').style.display = 'block';
+            loadDashboard();
+        }
+
+        function validateIdentity() {
+            const u = document.getElementById('username').value;
+            const p = document.getElementById('password').value;
+            if (u === 'opendev-labs' && p === 'co-auth-access-888') {
+                sessionStorage.setItem('arbitronix_auth', 'true');
+                document.getElementById('login-portal').style.display = 'none';
+                document.body.style.display = 'block';
+                document.getElementById('dashboard-wrapper').style.display = 'block';
+                loadDashboard();
+            } else {
+                document.getElementById('error-msg').style.display = 'block';
+            }
+        }
+
+        function loadDashboard() {
+            const dashboardHTML = `
+                <header class="header">
+                    <div class="logo-container">
+                        <div class="logo-text">ARBITRONIX <span>by opendev-labs</span></div>
+                    </div>
+                    <div class="status-area">
+                        <div id="connection-status" class="status-item" style="color: var(--danger)">DISCONNECTED</div>
+                        <button class="status-item logout-btn" onclick="sessionStorage.clear(); location.reload();">LOGOUT</button>
+                    </div>
+                </header>
+                <div class="main-container">
+                    <div class="dashboard-grid">
+                        <div class="quantum-card"><div class="stat-label">EQUITY VALUATION</div><div class="stat-value" id="equity">$10,000.00</div></div>
+                        <div class="quantum-card"><div class="stat-label">SESSION PNL</div><div class="stat-value" id="pnl">$0.00</div></div>
+                        <div class="quantum-card"><div class="stat-label">MARKET EXPOSURE</div><div class="stat-value" id="positions">0</div></div>
+                        <div class="quantum-card"><div class="stat-label">MISSION STATUS</div><div class="stat-value" id="engine-mode" style="color: var(--primary)">READY</div></div>
+                    </div>
+                    <div class="content-area">
+                        <div class="market-table-container">
+                            <table id="market-table">
+                                <thead>
+                                    <tr>
+                                        <th>ASSET</th><th>PRICE</th><th>Z-SCORE</th><th>BETA</th><th>FUNDING</th><th>CYCLE</th><th>PHASE</th><th>SIGNAL</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="market-body"></tbody>
+                            </table>
+                        </div>
+                        <div class="telemetry-container">
+                            <div class="telemetry-header">QUANTUM TELEMETRY</div>
+                            <div class="telemetry-content" id="log-dump"></div>
+                        </div>
+                    </div>
+                    <div class="server-config">
+                        <input type="text" id="ws-server" placeholder="localhost:8000" value="${localStorage.getItem('ws_host') || 'localhost:8000'}" style="width: 250px;">
+                        <button class="login-btn" style="width: auto; margin:0; padding:12px 25px;" onclick="connectToEngine()">CONNECT ENGINE</button>
+                    </div>
+                </div>
+            `;
+            document.getElementById('portal-content').innerHTML = dashboardHTML;
+            setTimeout(connectToEngine, 500);
+        }
+
+        let socket;
+        function connectToEngine() {
+            const host = document.getElementById('ws-server').value || 'localhost:8000';
+            localStorage.setItem('ws_host', host);
+            const status = document.getElementById('connection-status');
+            const mode = document.getElementById('engine-mode');
+
+            status.textContent = 'DIALING...';
+            status.style.color = 'var(--warning)';
+
+            if (socket) socket.close();
+
+            // Intelligence: Sense environment
+            const isHTTPS = location.protocol === 'https:';
+            const isLocal = host.includes('localhost') || host.includes('127.0.0.1');
+            const protocol = isHTTPS && !isLocal ? 'wss' : 'ws';
+
+            try {
+                socket = new WebSocket(`${protocol}://${host}/ws`);
+
+                socket.onopen = () => {
+                    status.innerHTML = '<div class="status-indicator"></div> LINKED';
+                    status.style.color = 'var(--success)';
+                    mode.textContent = 'ACTIVE';
+                    addLog('Quantum Handshake Complete. Synchronizing telemetry stream...', 'success');
+                };
+
+                socket.onclose = () => {
+                    status.textContent = 'DISCONNECTED';
+                    status.style.color = 'var(--danger)';
+                    mode.textContent = 'READY';
+                    if (isHTTPS && isLocal) {
+                        addLog('NOTICE: HTTPS blocked Localhost? Use chrome://flags/#allow-insecure-localhost if connection fails.', 'warning');
+                    }
+                };
+
+                socket.onmessage = (e) => {
+                    const data = JSON.parse(e.data);
+                    if (data.type === 'symbol_update') updateMarketRow(data.payload);
+                    else if (data.symbols) updateGlobalMetrics(data);
+                    else if (data.s) updateMarketRow(data);
+                };
+
+                socket.onerror = () => addLog('Engine Link Interruption. Port 8000 closed or unreachable.', 'danger');
+            } catch (e) {
+                addLog(`Connection Failed: ${e.message}`, 'danger');
+            }
+        }
+
+        function updateGlobalMetrics(state) {
+            if (state.equity !== undefined) document.getElementById('equity').textContent = `$${state.equity.toLocaleString(undefined, { minimumFractionDigits: 2 })}`;
+            if (state.pnl !== undefined) {
+                const p = document.getElementById('pnl');
+                p.textContent = `${state.pnl >= 0 ? '+' : ''}$${state.pnl.toLocaleString(undefined, { minimumFractionDigits: 2 })}`;
+                p.style.color = state.pnl >= 0 ? 'var(--success)' : 'var(--danger)';
+            }
+            if (state.symbols) {
+                for (const s in state.symbols) {
+                    updateMarketRow(state.symbols[s]);
+                }
+            }
+        }
+
+        function updateMarketRow(d) {
+            if (!d || !d.s) return;
+            const table = document.getElementById('market-body');
+            let row = document.getElementById(`row-${d.s}`);
+            if (!row) {
+                row = document.createElement('tr');
+                row.id = `row-${d.s}`;
+                table.appendChild(row);
+            }
+
+            const p = parseFloat(d.p || 0);
+            const z = parseFloat(d.z || 0);
+            const beta = parseFloat(d.beta || 1);
+            const funding = parseFloat(d.funding || 0) * 100;
+            const cycle = d.cycle || 0;
+            const phase = d.phase || 'syncing';
+            const action = d.action || 'HOLD';
+
+            row.innerHTML = `
+                <td>${d.s}</td>
+                <td style="color:var(--text-h)">$${p.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                <td style="color:${Math.abs(z) > 2 ? 'var(--warning)' : 'inherit'}">${z.toFixed(2)}</td>
+                <td>${beta.toFixed(2)}</td>
+                <td>${funding.toFixed(4)}%</td>
+                <td>${cycle}m</td>
+                <td style="text-transform:uppercase; font-size:10px;">${phase}</td>
+                <td><span class="action-chip ${action.toLowerCase()}">${action}</span></td>
+            `;
+            if (action !== 'HOLD') addLog(`Strategy Signal: [${action}] ${d.s} at $${p}`, 'warning');
+
+            const activeCount = table.querySelectorAll('.action-chip.buy, .action-chip.sell').length;
+            document.getElementById('positions').textContent = activeCount;
+        }
+
+        function addLog(msg, type = 'info') {
+            const d = document.getElementById('log-dump');
+            if (!d) return;
+            const line = document.createElement('div');
+            line.className = 'log-line';
+            line.style.borderColor = type === 'success' ? 'var(--success)' : type === 'danger' ? 'var(--danger)' : type === 'warning' ? 'var(--warning)' : 'var(--primary)';
+            line.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`;
+            d.prepend(line);
+            if (d.childNodes.length > 30) d.removeChild(d.lastChild);
+        }
+    </script>
+</body>
+
+</html>
