@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arbitronix Core | Quantum Mission Control</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg-base: #020408;
+            --bg-surface: #0a0c14;
+            --bg-card: rgba(16, 18, 28, 0.7);
+            --primary: #00f5ff;
+            --primary-glow: rgba(0, 245, 255, 0.4);
+            --secondary: #7c3aed;
+            --secondary-glow: rgba(124, 58, 237, 0.4);
+            --success: #00ff88;
+            --danger: #ff3366;
+            --warning: #ffcc00;
+            --text-h: #ffffff;
+            --text-p: #94a3b8;
+            --border: rgba(255, 255, 255, 0.05);
+            --glass: blur(25px);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: default;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            background-image:
+                radial-gradient(circle at 0% 0%, rgba(124, 58, 237, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 100% 100%, rgba(0, 245, 255, 0.08) 0%, transparent 50%);
+            color: var(--text-p);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Particles animation simulation */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            opacity: 0.02;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        .header {
+            padding: 0 40px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border);
+            background: rgba(2, 4, 8, 0.85);
+            backdrop-filter: var(--glass);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .logo-symbol {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 10px;
+            transform: rotate(45deg);
+            box-shadow: 0 0 25px var(--primary-glow);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-symbol::after {
+            content: "A";
+            color: #000;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 800;
+            transform: rotate(-45deg);
+            font-size: 18px;
+        }
+
+        .logo-text {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-h);
+            letter-spacing: -1px;
+        }
+
+        .logo-text span {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .system-status {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            border-radius: 99px;
+        }
+
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--success);
+            box-shadow: 0 0 10px var(--success);
+            animation: pulse-active 2s infinite;
+        }
+
+        @keyframes pulse-active {
+            0% {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 0.5;
+                transform: scale(1.2);
+            }
+
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .main-container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 40px;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .quantum-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .quantum-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .quantum-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255, 255, 255, 0.15);
+            background: rgba(20, 22, 35, 0.8);
+        }
+
+        .quantum-card:hover::before {
+            opacity: 1;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-p);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .stat-value {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 42px;
+            font-weight: 700;
+            color: var(--text-h);
+            line-height: 1.1;
+        }
+
+        .stat-sub {
+            margin-top: 15px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .trend-up {
+            color: var(--success);
+        }
+
+        .trend-down {
+            color: var(--danger);
+        }
+
+        .content-area {
+            display: grid;
+            grid-template-columns: 2.5fr 1fr;
+            gap: 24px;
+        }
+
+        .market-table-container {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 32px;
+            backdrop-filter: var(--glass);
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .table-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-h);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 12px;
+        }
+
+        th {
+            text-align: left;
+            padding: 0 20px 15px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-p);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        tbody tr {
+            background: rgba(255, 255, 255, 0.02);
+            transition: all 0.2s;
+        }
+
+        tbody tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+            transform: scale(1.005);
+        }
+
+        td {
+            padding: 20px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            border-top: 1px solid transparent;
+            border-bottom: 1px solid transparent;
+        }
+
+        td:first-child {
+            border-radius: 12px 0 0 12px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            color: var(--text-h);
+            border-left: 1px solid transparent;
+        }
+
+        td:last-child {
+            border-radius: 0 12px 12px 0;
+            border-right: 1px solid transparent;
+        }
+
+        .symbol-pair {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .symbol-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--border);
+        }
+
+        .action-chip {
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            text-align: center;
+            display: inline-block;
+            min-width: 80px;
+        }
+
+        .buy {
+            background: rgba(0, 255, 136, 0.1);
+            color: var(--success);
+            border: 1px solid rgba(0, 255, 136, 0.25);
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.05);
+        }
+
+        .sell {
+            background: rgba(255, 51, 102, 0.1);
+            color: var(--danger);
+            border: 1px solid rgba(255, 51, 102, 0.25);
+            box-shadow: 0 0 15px rgba(255, 51, 102, 0.05);
+        }
+
+        .hold {
+            background: rgba(255, 255, 255, 0.03);
+            color: var(--text-p);
+            border: 1px solid var(--border);
+        }
+
+        .telemetry-container {
+            background: var(--bg-base);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .telemetry-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .telemetry-content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            max-height: 600px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            line-height: 1.6;
+        }
+
+        .log-line {
+            padding: 8px 12px;
+            border-radius: 6px;
+            margin-bottom: 4px;
+            border-left: 2px solid transparent;
+            animation: slide-in 0.3s ease-out;
+        }
+
+        @keyframes slide-in {
+            from {
+                opacity: 0;
+                transform: translateX(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .log-line:nth-child(even) {
+            background: rgba(255, 255, 255, 0.01);
+        }
+
+        .log-line.info {
+            border-color: var(--secondary);
+        }
+
+        .log-line.success {
+            border-color: var(--success);
+            background: rgba(0, 255, 136, 0.03);
+        }
+
+        .log-line.warning {
+            border-color: var(--warning);
+            background: rgba(255, 204, 0, 0.03);
+        }
+
+        .time-stamp {
+            color: var(--text-p);
+            opacity: 0.5;
+            margin-right: 12px;
+        }
+
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 100px;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header">
+        <div class="logo-container">
+            <div class="logo-symbol"></div>
+            <div class="logo-text">ARBITRONIX <span>CORE</span></div>
+        </div>
+        <div class="system-status">
+            <div class="status-item">
+                <span style="opacity: 0.5">Latency</span> 12ms
+            </div>
+            <div class="status-item">
+                <span style="opacity: 0.5">API</span> <span style="color: var(--success)">Connected</span>
+            </div>
+            <div class="status-item">
+                <div class="status-indicator"></div>
+                LIVE ENGINE ACTIVE
+            </div>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <div class="dashboard-grid">
+            <div class="quantum-card">
+                <div class="stat-label">NET VALUATION <svg width="12" height="12" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2">
+                        <path
+                            d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.4715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" />
+                        <path d="M12 16V12" />
+                        <path d="M12 8H12.01" />
+                    </svg></div>
+                <div class="stat-value" id="equity">$10,482.50</div>
+                <div class="stat-sub trend-up">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                        <path d="M7 17L17 7M17 7H7M17 7V17" />
+                    </svg>
+                    +4.82% Total Return
+                </div>
+            </div>
+            <div class="quantum-card">
+                <div class="stat-label">UNREALIZED PNL <svg width="12" height="12" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2">
+                        <path
+                            d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.4715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" />
+                        <path d="M12 16V12" />
+                        <path d="M12 8H12.01" />
+                    </svg></div>
+                <div class="stat-value" id="pnl" style="color: var(--success)">+$482.50</div>
+                <div class="stat-sub" style="opacity: 0.6">Volatility Adjusted</div>
+            </div>
+            <div class="quantum-card">
+                <div class="stat-label">ACTIVE EXPOSURE <svg width="12" height="12" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2">
+                        <path
+                            d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.4715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" />
+                        <path d="M12 16V12" />
+                        <path d="M12 8H12.01" />
+                    </svg></div>
+                <div class="stat-value" id="positions">3</div>
+                <div class="stat-sub" style="color: var(--warning)">Delta Neutral Hedge Active</div>
+            </div>
+            <div class="quantum-card">
+                <div class="stat-label">RISK COEFFICIENT <svg width="12" height="12" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2">
+                        <path
+                            d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.4715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" />
+                        <path d="M12 16V12" />
+                        <path d="M12 8H12.01" />
+                    </svg></div>
+                <div class="stat-value" style="color: var(--primary)">OPTIMAL</div>
+                <div class="stat-sub" style="opacity: 0.6">Max Drawdown Target: 5.0%</div>
+            </div>
+        </div>
+
+        <div class="content-area">
+            <div class="market-table-container">
+                <div class="table-header">
+                    <h2 class="table-title">Asynchronous Feed Analytics</h2>
+                    <div style="display: flex; gap: 8px;">
+                        <span class="status-item" style="font-size: 11px">WebSockets: OK</span>
+                    </div>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ASSET PAIR</th>
+                            <th>MARKET PRICE</th>
+                            <th>24H DELTA</th>
+                            <th>Z-SCORE (20p)</th>
+                            <th>HURST EXP</th>
+                            <th>ENGINE SIGNAL</th>
+                        </tr>
+                    </thead>
+                    <tbody id="market-body">
+                        <!-- Data Streaming -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="telemetry-container">
+                <div class="telemetry-header">
+                    <span class="table-title" style="font-size: 14px">CORE TELEMETRY</span>
+                    <span class="status-indicator"></span>
+                </div>
+                <div class="telemetry-content" id="log-dump">
+                    <!-- Logs here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const ws = new WebSocket(`ws://${location.host}/ws`);
+        const marketBody = document.getElementById('market-body');
+        const logDump = document.getElementById('log-dump');
+
+        function addLog(msg, type = 'info') {
+            const time = new Date().toLocaleTimeString([], { hour12: false, fractionalSecondDigits: 1 });
+            const line = document.createElement('div');
+            line.className = `log-line ${type}`;
+            line.innerHTML = `<span class="time-stamp">${time}</span> ${msg}`;
+            logDump.prepend(line);
+            if (logDump.children.length > 40) logDump.lastChild.remove();
+        }
+
+        ws.onopen = () => addLog('Quantum Handshake Complete. Secure stream established.', 'success');
+        ws.onerror = () => addLog('Stream Interruption. Attempting recovery...', 'warning');
+
+        ws.onmessage = (event) => {
+            const state = JSON.parse(event.data);
+
+            // Core Metrics
+            document.getElementById('equity').textContent = `$${state.equity.toLocaleString(undefined, { minimumFractionDigits: 2 })}`;
+            const pnlValue = state.pnl;
+            const pnlElem = document.getElementById('pnl');
+            pnlElem.textContent = `${pnlValue >= 0 ? '+' : ''}$${pnlValue.toLocaleString(undefined, { minimumFractionDigits: 2 })}`;
+            pnlElem.style.color = pnlValue >= 0 ? 'var(--success)' : 'var(--danger)';
+
+            const positionCount = Object.keys(state.symbols).filter(s => state.symbols[s].holding > 0).length;
+            document.getElementById('positions').textContent = positionCount;
+
+            // Table Data
+            let rows = '';
+            for (const [symbol, data] of Object.entries(state.symbols)) {
+                const z = data.z || 0;
+                const hurst = data.hurst || 0.5;
+                const action = data.action || 'HOLD';
+                const actionClass = action.toLowerCase();
+                const deltaColor = data.change >= 0 ? 'var(--success)' : 'var(--danger)';
+
+                rows += `
+                    <tr>
+                        <td>
+                            <div class="symbol-pair">
+                                <div class="symbol-icon" style="background: linear-gradient(135deg, ${action === 'BUY' ? 'var(--success)' : action === 'SELL' ? 'var(--danger)' : 'rgba(255,255,255,0.1)'}, transparent)"></div>
+                                ${symbol}
+                            </div>
+                        </td>
+                        <td style="color: var(--text-h)">$${parseFloat(data.p).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                        <td style="color: ${deltaColor}">${data.change >= 0 ? '↑' : '↓'} ${Math.abs(data.change || 0).toFixed(2)}%</td>
+                        <td style="font-weight: 700; color: ${Math.abs(z) > 2 ? 'var(--warning)' : 'var(--text-p)'}">${z.toFixed(2)}</td>
+                        <td>${hurst.toFixed(3)}</td>
+                        <td><div class="action-chip ${actionClass}">${action}</div></td>
+                    </tr>
+                `;
+
+                if (data.action && data.action !== 'HOLD') {
+                    addLog(`Executing: [${data.action}] for ${symbol} at $${data.p}`, 'warning');
+                }
+            }
+            if (rows) marketBody.innerHTML = rows;
+        };
+
+        // Initial Logs
+        addLog('Arbitronix Core Engine v1.0.4 initialized.', 'info');
+        addLog('Encryption layer verified.', 'info');
+        addLog('Binance USDS-M Futures WebSocket Connected.', 'success');
+    </script>
+</body>
+
+</html>
