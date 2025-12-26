@@ -1,0 +1,31 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Logs and databases
+logs/
+*.log
+data/
+*.db
+*.parquet
+
+# IDE
+.vscode/
+.idea/
+
+# Docker
+docker-compose.override.yml

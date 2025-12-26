@@ -1,0 +1,28 @@
+services:
+  trading_bot:
+    build: .
+    container_name: trading_engine
+    restart: unless-stopped
+    volumes:
+      - .:/app
+    environment:
+      - TRADING_MODE=${TRADING_MODE:-PAPER}
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    depends_on:
+      - redis
+    ports:
+      - "8000:8000"
+    command: python main.py
+
+  redis:
+    image: redis:alpine
+    container_name: trading_redis
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+volumes:
+  redis_data:
