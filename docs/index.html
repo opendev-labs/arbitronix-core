@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arbitronix Core | Institutional Trading Intelligence</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg: #000000;
+            --surface: #0a0a0a;
+            --accent: #00f2ff;
+            --accent-soft: rgba(0, 242, 255, 0.1);
+            --text: #ffffff;
+            --text-dim: #888888;
+            --glass: rgba(255, 255, 255, 0.03);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        h1,
+        h2,
+        h3,
+        .logo {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 40px;
+        }
+
+        /* Gradient Animation Background */
+        .bg-glow {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background:
+                radial-gradient(circle at 10% 20%, rgba(124, 58, 237, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(0, 242, 255, 0.05) 0%, transparent 40%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        nav {
+            height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: absolute;
+            width: 100%;
+            top: 0;
+            left: 0;
+            z-index: 10;
+        }
+
+        .logo {
+            font-size: 24px;
+            letter-spacing: -1px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-box {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--accent), #7c3aed);
+            border-radius: 8px;
+            transform: rotate(45deg);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 40px;
+        }
+
+        .nav-link {
+            color: var(--text-dim);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+            transition: color 0.3s;
+        }
+
+        .nav-link:hover {
+            color: var(--text);
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: var(--text);
+            color: var(--bg);
+        }
+
+        .btn-primary:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        .hero {
+            padding-top: 200px;
+            padding-bottom: 120px;
+            text-align: center;
+            position: relative;
+        }
+
+        .hero-tag {
+            background: var(--accent-soft);
+            color: var(--accent);
+            padding: 8px 16px;
+            border-radius: 99px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 24px;
+            display: inline-block;
+            border: 1px solid rgba(0, 242, 255, 0.2);
+        }
+
+        .hero h1 {
+            font-size: 84px;
+            line-height: 0.95;
+            letter-spacing: -4px;
+            margin-bottom: 40px;
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero h1 span {
+            color: transparent;
+            -webkit-text-stroke: 1px rgba(255, 255, 255, 0.3);
+        }
+
+        .hero p {
+            font-size: 18px;
+            color: var(--text-dim);
+            max-width: 600px;
+            margin: 0 auto 48px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 40px;
+            margin-top: 80px;
+        }
+
+        .feature-card {
+            background: var(--glass);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 40px;
+            border-radius: 24px;
+            text-align: left;
+            transition: all 0.3s;
+        }
+
+        .feature-card:hover {
+            border-color: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.05);
+            transform: translateY(-10px);
+        }
+
+        .feature-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--accent-soft);
+            border-radius: 12px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent);
+        }
+
+        .feature-card h3 {
+            font-size: 20px;
+            margin-bottom: 16px;
+        }
+
+        .feature-card p {
+            color: var(--text-dim);
+            font-size: 15px;
+        }
+
+        .footer {
+            margin-top: 200px;
+            padding: 80px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            text-align: center;
+        }
+
+        .footer p {
+            color: var(--text-dim);
+            font-size: 14px;
+        }
+
+        /* Mock Terminal for code snippet */
+        .terminal {
+            background: #0d0d0d;
+            border-radius: 12px;
+            padding: 24px;
+            text-align: left;
+            max-width: 500px;
+            margin: 60px auto 0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            font-family: 'Space Grotesk', monospace;
+        }
+
+        .terminal-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 4px;
+        }
+
+        .line {
+            margin-bottom: 4px;
+        }
+
+        .green {
+            color: #00ff88;
+        }
+
+        .blue {
+            color: #00f2ff;
+        }
+
+        .dim {
+            color: #444;
+        }
+
+        @media (max-width: 900px) {
+            .hero h1 {
+                font-size: 56px;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-glow"></div>
+
+    <nav class="container">
+        <div class="logo">
+            <div class="logo-box"></div>
+            ARBITRONIX<span>CORE</span>
+        </div>
+        <div class="nav-links">
+            <a href="https://github.com/opendev-labs/arbitronix-core-" class="nav-link">GITHUB</a>
+            <a href="#" class="nav-link">DOCUMENTATION</a>
+        </div>
+        <a href="https://github.com/opendev-labs/arbitronix-core-" class="btn btn-primary">DEPLOY ENGINE</a>
+    </nav>
+
+    <main class="container">
+        <section class="hero">
+            <div class="hero-tag">PRODUCTION GRADE ENGINE</div>
+            <h1>Institutional Intelligence <span>Built for Scale.</span></h1>
+            <p>Deploy high-frequency trading infrastructure in 60 seconds. Real-time WebSockets, advanced quant filters,
+                and institutional risk management.</p>
+
+            <div class="cta-group">
+                <a href="https://github.com/opendev-labs/arbitronix-core-" class="btn btn-primary">GET STARTED</a>
+            </div>
+
+            <div class="terminal">
+                <div style="margin-bottom: 20px;">
+                    <div class="terminal-dot" style="background: #ff5f56;"></div>
+                    <div class="terminal-dot" style="background: #ffbd2e;"></div>
+                    <div class="terminal-dot" style="background: #27c93f;"></div>
+                </div>
+                <div class="line"><span class="dim">$</span> git clone arbi-core</div>
+                <div class="line"><span class="dim">$</span> ./setup.sh</div>
+                <div class="line"><span class="dim">$</span> python main.py</div>
+                <div class="line"><span class="green">✓</span> <span class="blue">Engine Deployed:</span> Connected to
+                    Binance WS</div>
+            </div>
+        </section>
+
+        <section class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">⚡</div>
+                <h3>Ultra Latency</h3>
+                <p>Asynchronous market data engine optimized for sub-millisecond signal processing and execution.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🛡️</div>
+                <h3>Risk Guard</h3>
+                <p>Institutional-grade risk management with hard-coded circuit breakers and volatility-adjusted sizing.
+                </p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔮</div>
+                <h3>Quant Logic</h3>
+                <p>Pre-built strategies including Mean Reversion, Liquidity Sweep, and Pair Trading filters.</p>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <p>© 2025 OPENDEV LABS. LICENSED UNDER MIT.</p>
+    </footer>
+</body>
+
+</html>
